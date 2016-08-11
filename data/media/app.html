@@ -1,60 +1,33 @@
+<!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <link href="style.css" rel="stylesheet">
 <script src="jquery.min.js"></script>
-<script src="weather.js" type="text/javascript"></script>
-<script src="script.js" type="text/javascript"></script>
+<script src="weather-script.js" type="text/javascript"></script>
+<script src="ui-script.js" type="text/javascript"></script>
 </head>
-<body onload="opacity();">
-<div id="container">
-	<div class="border">
-		<div class="close">&#10005;</div>
-		<div class="minimize">&#150;</div>
-		<div class="settings"><img src="settings.svg"></div>
-		<div class="sync"><img src="sync.svg"></div>
-	</div>
-	<div id="actualWeather">
-		<div id="city"><span></span></div>
-		<div id="code"></div>
-		<div class="details">
-			<div class="left" id="temperature"></div>
-			<div class="right">
-					<span id="windSpeed"></span> <span id="windUnit"></span><br>
-					<span id="humidity"></span>
-			</div>
-		</div>
-		<div class="week">
-			<div id="0">
-				<span class="day"></span>
-				<span class="code"></span>
-				<span class="temp"></span>
-			</div>
-			<div id="1">
-				<span class="day"></span>
-				<span class="code"></span>
-				<span class="temp"></span>
-			</div>
-			<div id="2">
-				<span class="day"></span>
-				<span class="code"></span>
-				<span class="temp"></span>
-			</div>
-			<div id="3">
-				<span class="day"></span>
-				<span class="code"></span>
-				<span class="temp"></span>
-			</div>
-			<div id="4">
-				<span class="day"></span>
-				<span class="code"></span>
-				<span class="temp"></span>
-			</div>
-		</div>
-	</div>
-</div>
-<div id="locationModal">
-	<div class="credits">
+<body>
+  <div id="container">
+    <!--Decorations bar -->
+    <div id="decoratorBar">
+      <table>
+        <tr>
+          <td id="windowControls">
+            <div class="close">&#10005;</div>
+          	<div class="minimize">&#150;</div>
+          </td>
+          <td id="otherControls">
+            <div class="settings"><img src="settings.svg"></div>
+            <div class="sync"><img src="sync.svg"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <div id="locationModal">
+      <!-- Creddits page -->
+      <div class="credits">
 		<img src="back.svg">
 		<h3 style="text-align: center">Cumulus v1.0.0</h3>
 		<br>
@@ -77,69 +50,145 @@
 		  <li><a href="https://sites.google.com/site/typhoonweatherapp/help-and-how-to-1/howtomaketyphoonavailableineveryworkspace">Esteban</a></li>
 		</ul>
 		<h3 style="text-align: center">Thanks for using.</h3><br><br>
-	</div>
-	<div class="input">
-	<input type="text" placeholder="Location"><span class="loader"></span><br>
-	e.g London England, Tokyo	
-	</div>
-	<div class="full">
+	  </div>
+	  
+	  <!-- Location Input -->
+	  <div class="input">
+	  <input type="text" placeholder="Location"><span class="loader"></span><br>	  
+	  </div>
+	  <p>e.g London England, Tokyo</p>
+	  
+	  <!-- Application & Data settings -->
+	  <div class="full">
 		<div class="toggleswitch measurement">
-			<span data-type="c">R</span><span data-type="f">T</span><span data-type="k">K</span>
+		  <table>
+		    <tbody>
+		      <tr>
+		        <td id="c">°C
+		          <input type="hidden" value="c">
+		        </td>
+		        <td id="f">°F
+		          <input type="hidden" value="f">
+		        </td>
+		        <td id="k">K
+		          <input type="hidden" value="k">
+		        </td>
+		      </tr>
+		    </tbody>
+		  </table>
 		</div>
 		<div class="toggleswitch speed">
-			<span data-type="mph">mph</span><span data-type="kph">kph</span><span data-type="ms">m/s</span>
+		  <table>
+		    <tbody>
+		      <tr>
+		        <td id="mph">mph
+		          <input type="hidden" value="mph">
+		        </td>
+		        <td id="kph">kph
+		          <input type="hidden" value="kph">
+		        </td>
+		        <td id="ms">m/s
+		          <input type="hidden" value="ms">
+		        </td>
+		      </tr>
+		    </tbody>
+		  </table>
 		</div>
-		<div class="color">
-			<span data-color="gradient"></span>
-			<span data-color="575591"></span>
-			<span data-color="FF0097"></span>
-			<span data-color="00ABA9"></span>
-			<span data-color="8CBF26"></span>
-			<span data-color="A05000"></span>
-			<span data-color="333333"></span>
-			<span data-color="F09609"></span>
-			<span data-color="1BA1E2"></span>
-			<span data-color="FF8E83"></span>
-			<span data-color="339933"></span>
-		</div>
-		<br>
+		
+		<div class="setting-wrapper">
+		  <div class="color">
+		    <span data-color="gradient"></span>
+		    <span data-color="575591"></span>
+		    <span data-color="FF0097"></span>
+		    <span data-color="00ABA9"></span>
+		    <span data-color="8CBF26"></span>
+		    <span data-color="A05000"></span>
+		    <span data-color="333333"></span>
+		    <span data-color="F09609"></span>
+		    <span data-color="1BA1E2"></span>
+		    <span data-color="FF8E83"></span>
+		    <span data-color="339933"></span>
+		  </div>
+		</div>		
+
 		<div class="launcher">
 			<input type="checkbox" id="launcherswitch"><label for="launcherswitch">Show Launcher Count</label>
 		</div>
-		<br>
-		<div class="apiSelector">
-		 	<table>
-		 		<tr>
-		 			<td style="width: 30%;">Source</td>
-		 			<td style="width: 100%;">
-		 				<select id="apiSelect"></select>
-		 			</td>
-		 		</tr>
-		 	</table>	
+		
+		<div class="setting-wrapper">
+		  <div class="apiSelector dropdown">
+		    <button class="dropbtn">API Select</button>
+		    <div class="dropdown-content">
+		      <div id="source-y">Yahoo! Weather<input type="hidden" value="y"></div>
+		      <div id="source-owm">Open Weather Map<input type="hidden" value="owm"></div>
+		    </div>	
+		  </div>
+		</div>		
+		
+		<div class="setting-wrapper">
+		  Opacity<br>
+		  <input id="slider" type="range" min ="0.1" max="1.0" step ="0.05" onchange="updateTitle(this.value);"/>
 		</div>
-		<br>
-		Opacity<br>&nbsp;
-		<input id="slider" type="range" min ="0.1" max="1.0" step ="0.05" onchange="updateTitle(this.value);"/>		
-		<br>&nbsp;&nbsp;
 		<div style="width:100%; text-align:center;">
 		<a class="btn" tag="credits">CREDITS</a>
 		<a class="btn" href="javascript:showNotFinished();">HOW TO</a>
 		<a class="btn" href="javascript:showNotFinished();">SUPPORT</a>
-		</div><br><br>
+		</div>
+	  </div>
+    </div>
+    
+    
+    <!--Weather data-->
+    <div id="actualWeather">
+      <div id="city"><span></span></div>
+	  <div id="code"></div>
+	  <div class="details">
+	    <div class="left" id="temperature"></div>
+		<div class="right">
+		  <span id="windSpeed"></span> <span id="windUnit"></span><br>
+		  <span id="humidity"></span>
+		</div>
+	  </div>	  
 	</div>
-</div>
-<div id="errorMessage">
+	<div class="week">
+	  <div id="0">
+	    <span class="day"></span>
+	    <span class="code"></span>
+	    <span class="temp"></span>
+	  </div>
+	  <div id="1">
+	    <span class="day"></span>
+	    <span class="code"></span>
+	    <span class="temp"></span>
+	  </div>
+	  <div id="2">
+	    <span class="day"></span>
+	    <span class="code"></span>
+	    <span class="temp"></span>
+	  </div>
+	  <div id="3">
+	    <span class="day"></span>
+	    <span class="code"></span>
+	    <span class="temp"></span>
+	  </div>
+	  <div id="4">
+	    <span class="day"></span>
+	    <span class="code"></span>
+	    <span class="temp"></span>
+	  </div>
+	</div>
+	<div id="errorMessage">
 	Could not connect to internet.<br>
 	Check your internet connection.<br>
 	<button class="btn">TRY AGAIN</button>
-</div>
-<div class="modalContainer">
-	<div id="notFinishedPlaceholder">
+    </div>
+    <div class="modalContainer">
+	  <div id="notFinishedPlaceholder">
 		Functionality not yet implemented.<br>
 		Thank you for understanding!<br>
 		<input type="button" class="btn" value="Close" onclick="hideNotFinished();">
-	</div>
-</div>
+	  </div>
+    </div>
+  </div>
 </body>
 </html>
-Contact GitHub 
