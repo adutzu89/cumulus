@@ -4,32 +4,23 @@ function savelocationFromInput(inputLocation, callback) {
         dataType : "json",
         url : locationRequestUrl(inputLocation),
         success : function(data) {
+        	hideError();
             saveLocationLocally(data);
             callback(localStorage.cumulus);
-        },
-        error: function(data) {
-            if (data.status === 0) {
-                showError('network');
-            }
         }
     });
 }
 
-function getWeatherData(callback) {
+function getWeatherData(callback) {	
     $.ajax({
         type : "GET",
         dataType : "json",
         url : dataRequestUrl(),
         success: function(data) {
-            $('#errorMessage').fadeOut(350);
+        	hideError();
             saveWeather(data, function() {
                 callback();
-            });
-        },
-        error: function(data) {
-            if (data.status === 0) {
-                showError('network');
-            }
+            });            
         }
     });    
 }
@@ -119,11 +110,6 @@ function openWeatherForecast(data, callback) {
             if (callback) {
                 callback();
             } 
-        },
-        error: function(data) {
-            if (data.status === 0) {
-                showError('network');
-            }
         }
     });
        
