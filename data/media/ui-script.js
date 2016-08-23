@@ -48,10 +48,6 @@ $(document).ready(function() {
         background(null);
     });
     
-    $('.color span[data-color=gradient]').on("click", function() {
-        $("#decoratorBar .settings").hide();
-    });
-    
     //First Run
     var locationInput = $("#locationModal .input :input");
     var typingTimer = 0;
@@ -179,6 +175,19 @@ function init_settings() {
             document.title = "disable_launcher";
         }
     });
+    //
+    if (localStorage.backgroundImage == "checked") {
+        $('#locationModal .backgroundCheck input').attr("checked", "checked");
+    }
+    $('#locationModal .backgroundCheck input').click(function() {
+    	localStorage.backgroundImage = $('#locationModal .backgroundCheck input').attr("checked");
+    	if (localStorage.backgroundImage == "checked") {
+        	$("#container").css( { "background-image" : "url(background/" + getBackgroundFromCode(weather.code) + ")", "background-size" : "cover", "background-repeat" : "no-repeat" });
+        }
+    	else {
+    		$("#container").css( { "background-image" : "", "background-size" : "", "background-repeat" : "" });
+    	}
+    });
 }
 
 function setWeather() {     
@@ -219,6 +228,10 @@ function setWeather() {
         }, 500);    
     //Background Color
     background(weather.temperature);
+    //Set background image based on weather if enabled
+    if (localStorage.backgroundImage == "checked") {
+    	$("#container").css( { "background-image" : "url(background/" + getBackgroundFromCode(weather.code) + ")", "background-size" : "cover", "background-repeat" : "no-repeat" });
+    }    
     setApiSelected();
  }
 
@@ -229,6 +242,7 @@ function init_storage() {
     localStorage.cumulus_launcher = localStorage.cumulus_launcher || "checked";
     localStorage.api = localStorage.api || "y";
     localStorage.app_opacity = localStorage.app_opacity || "0.8";
+    localStorage.backgroundImage = localStorage.backgroundImage || "checked"; 
 }
 
 function show_settings(amount) {
@@ -264,6 +278,11 @@ function opacity() {
     $('input[type=range]').val(localStorage.app_opacity);
     document.title = "o" + localStorage.app_opacity;
     document.title = "enable_drag";
+}
+
+function updateTitle(val) {
+	document.title = "o" + val;
+	localStorage.app_opacity = val;
 }
 
 function showNotFinished() {

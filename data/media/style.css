@@ -365,7 +365,7 @@ p, span, div {
     outline: none;
 }
 
-#locationModal .launcher {
+#locationModal .launcher, .backgroundCheck {
     margin: 0;
     padding: 10px 0;
     width: 90%;

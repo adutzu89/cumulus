@@ -271,4 +271,14 @@ function kphToMs(speed) {
 	return Math.round(speed * 0.27);
 }
 
-
+//Get background image based on yahoo codes 
+function getBackgroundFromCode(code) {    
+    var images = { 0: "tornado.jpg", 1: "", 2: "hurricane.jpg", 3: "thunderstorm.jpg", 4: "thunderstorm.jpg", 5: "snow-rain.jpg", 6: "snow-rain.jpg", 7:"sleet.jpg", 8: "drizzle-night.jpg", 9: "drizzle-night.jpg", 10: "freezing-rain.jpg",
+            11: "rain-night.jpg", 12: "rain-night.jpg", 13: "snow-night.jpg", 14: "snow-night.jpg", 15: "snow-night.jpg", 16: "snow-night.jpg", 17: "hail.jpg", 18: "sleet.jpg", 19: "dust.jpg", 20: "mist.jpg", 21: "fog.jpeg", 22: "fog.jpeg",
+            23: "windy.jpg", 24: "windy.jpg", 25: "cold", 26: "cloudy-day.jpg", 27: "cloudy-night.jpg", 28: "cloudy-day.jpg", 29: "partly-cloudy-night.jpg", 30: "partly-cloudy-day.jpg", 31: "clear-night.jpg", 32: "clear-day.jpg", 
+            33: "fair-night.jpg", 34: "fair-day.jpg", 35: "hail.jpg", 36: "hot-clear-day.jpeg", 37: "thunderstorm.jpg", 38: "thunderstorm-with-rain.jpg", 39: "thunderstorm-with-rain.jpg", 40: "light-rain.jpg", 41: "snow.jpg", 42: "snow.jpg",
+            43: "snow.jpg", 44: "partly-cloudy-day.jpg", 45: "thunderstorm-with-heavy-rain.jpg", 46: "snow-rain.jpg", 47: "thunderstorm-with-heavy-rain.jpg", 3200: "fair-day.jpg" 
+            };
+    return images[code];
+    
+}
