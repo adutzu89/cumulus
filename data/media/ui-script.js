@@ -6,8 +6,7 @@ $(document).ready(function() {
         });
     };
     
-    //APP START.
-    init_settings();    
+    //APP START.    
     if (!localStorage.cumulus) {
         //if there is no data initialise default data in localStorage for UI
         init_storage();
@@ -18,8 +17,9 @@ $(document).ready(function() {
         setInterval(function() {
             console.log("Updating Data...");
             getWeather(null);
-        }, 900000);     
+        }, 3600000);     
     }
+    init_settings();
     
     //Update weather data based on location stored
     $("#decoratorBar .sync").on("click", function() {
@@ -76,16 +76,17 @@ $(document).ready(function() {
   //This can only be run if there is a tick.
     $("#locationModal .loader").on("click", function() {
         if ( $(this).hasClass("tick") ) {
-            getWeather(null);
-            show_settings("noweather");
-            setInterval(function() {
-                console.log("Updating Data...");
-                $("#decoratorBar .sync").click();
-            }, 900000)
+            getWeather(null);            
             $("#locationModal .input :input").val("");
             $(this).removeClass("tick");
             $(this).removeAttr("data-code");
             $(this).html("");
+            show_settings("noweather");
+            setInterval(function() {                
+                console.log("Updating Data...");
+                $("#decoratorBar .sync").click();
+            }, 3600000)
+            
         }
     });
     
@@ -95,14 +96,18 @@ $(document).ready(function() {
     });
 
     //Hide api options when option is clicked
-    $(".dropdown-content div").on("click", function() {     
-        $(".dropdown-content").toggle();
-        $("#decoratorBar .settings, #decoratorBar .sync").hide();
-        localStorage.api = $(this).find(":input:hidden:eq(0)").val();       
-        savelocationFromInput(localStorage.cumulus_location, function(cityCode) {
-            $("#decoratorBar .sync").show();
-            setApiSelected();
-        });     
+    $(".dropdown-content div").on("click", function() {  
+        //Do not toggle if weather is syncing
+        if (!$('#decoratorBar .sync').hasClass('busy') && $("#locationModal .input :input").val().length == 0) {
+            $(".dropdown-content").toggle();
+            $("#decoratorBar .settings, #decoratorBar .sync").hide();
+            localStorage.api = $(this).find(":input:hidden:eq(0)").val();      
+            var searchLocation = localStorage.cumulus_location + "," + localStorage.cumulus_country;
+            savelocationFromInput(searchLocation, function(cityCode) {
+                $("#decoratorBar .sync").show();
+                setApiSelected();
+            });
+        }            
     });
 
     //Hide api options when hovers out of api select button or options
@@ -205,44 +210,45 @@ function setWeather() {
 //    weather.windDirection = localStorage.cumulus_direction || "NaN";  // not used yet
     
     document.title = weather.temperature;
-    $('#city span').html('<a href="' + localStorage.cumulus_link + '">' + localStorage.cumulus_location + '</a>');
+    $('#city span').html("<a href='" + localStorage.cumulus_link + "'>" + localStorage.cumulus_location + "</a>");
     $("#code").text(weather_code(weather.code)).attr("class", "w" + weather.code);
-    $("#temperature").text(weather.temperature + getTemperatureSymbol(localStorage.cumulus_measurement.toLowerCase()));
-    $("#windSpeed").text(weather.windSpeed);
-    $("#windUnit").text((localStorage.cumulus_speed == "ms") ? "m/s" : localStorage.cumulus_speed);
-    $("#humidity").text(weather.humidity + " %");
-    
+    $("#temperature").html(weather.temperature + getTemperatureSymbol(localStorage.cumulus_measurement.toLowerCase()));
+    $("#windSpeed").html(weather.windSpeed);
+    $("#windUnit").html((localStorage.cumulus_speed == "ms") ? "m/s" : localStorage.cumulus_speed);
+    $("#humidity").html(weather.humidity + " %");
+    $("#weatherDesc").html("<span style='text-transform:capitalize;font-family:UbuntuCondensed;'>" + localStorage.weather_desc + "</span>");
     //Weekly Weather
     for (var i = 0; i < 5; i++) {
         $('#' + i + ' .day').text(localStorage.getItem('forecast' + i + '_day'));
         $('#' + i + ' .code').text(weather_code(localStorage.getItem('forecast' + i + '_code')));
         $('#' + i + ' .temp').html(localStorage.getItem('forecast' + i + '_high') + "°<span>" + localStorage.getItem('forecast' + i + '_low') + "°</span>");
-    }    
-
-    $('#actualWeather').fadeIn(500);
-    $("#locationModal").fadeOut(500);
-    // spin the thing for 500ms longer than it actually takes, because
-    // most of the time refreshing is actually instant :)
-    setTimeout(function() {
-        $('#decoratorBar .sync').removeClass('busy');
-        }, 500);    
+    }
+    
+    setApiSelected();       
     //Background Color
     background(weather.temperature);
     //Set background image based on weather if enabled
     if (localStorage.backgroundImage == "checked") {
     	$("#container").css( { "background-image" : "url(background/" + getBackgroundFromCode(weather.code) + ")", "background-size" : "cover", "background-repeat" : "no-repeat" });
-    }    
-    setApiSelected();
+    }
+    // spin the thing for 500ms longer than it actually takes, because
+    // most of the time refreshing is actually instant :)
+    setTimeout(function() {
+        $('#decoratorBar .sync').removeClass('busy');
+        $('#actualWeather').fadeIn(500);
+        $("#locationModal").fadeOut(500);
+        }, 500); 
  }
 
 function init_storage() {
     localStorage.cumulus_measurement = localStorage.cumulus_measurement || "c";
     localStorage.cumulus_speed = localStorage.cumulus_speed || "kph";
     localStorage.cumulus_color =  localStorage.cumulus_color || "gradient";
-    localStorage.cumulus_launcher = localStorage.cumulus_launcher || "checked";
+    localStorage.cumulus_launcher = localStorage.cumulus_launcher || "unchecked";
     localStorage.api = localStorage.api || "y";
     localStorage.app_opacity = localStorage.app_opacity || "0.8";
-    localStorage.backgroundImage = localStorage.backgroundImage || "checked"; 
+    localStorage.backgroundImage = localStorage.backgroundImage || "unchecked"; 
+    localStorage.weather_desc = localStorage.weather_desc || ""; 
 }
 
 function show_settings(amount) {
@@ -407,9 +413,9 @@ function background(temp) {
     //Sets Background Color
     if (localStorage.cumulus_color == "gradient") {
         var percentage = Math.round((temp - 45) *  2.2);
-        $("#container").css("background", blend(percentage));
+        $("#container").css("background-color", blend(percentage));
     } else {
-        $("#container").css("background", "#" + localStorage.cumulus_color);
+        $("#container").css("background-color", "#" + localStorage.cumulus_color);
     }
 }
 

@@ -29,7 +29,7 @@
       <!-- Creddits page -->
       <div class="credits">
 		<img src="back.svg">
-		<h3 style="text-align: center">Cumulus v1.0.2</h3>
+		<h3 style="text-align: center">Cumulus v1.0.3</h3>
 		<br>
 		<p>Cumulus is a simple weather application for Ubuntu. <br>
 		It is and always will be free.<br> 
@@ -37,12 +37,12 @@
 		<a href="http://www.gnu.org/licenses/gpl.html">GPL-3</a>.<br>
 		Derived from <a href="https://github.com/apandada1/typhoon">Typhoon</a><br>
 		Icons (<a href="http://adamwhitcroft.com/climacons/">Climacons</a>) by <a href="https://twitter.com/AdamWhitcroft">Adam Whitcroft</a>.<br>
-		Powered by <a href="http://weather.yahoo.com">Yahoo! Weather</a>.<br>
-		Active developers and maintainers:</p>		
+		Powered by: <a href="http://weather.yahoo.com">Yahoo! Weather</a> & <a href="http://openweathermap.org/">Open Weather Map</a></p>
+		<p>Active developers and maintainers:</p>		
 		<ul>
-		      <li><a href="https://github.com/kd8bny">Daryl Bennett</a></li>
-		      <li><a href="https://plus.google.com/102096389476199660882">Adrian Verban</a></li>
-		      <li><a href="https://github.com/apandada1">Archisman Panigrahi</a></li>
+		  <li><a href="https://github.com/kd8bny">Daryl Bennett</a></li>
+		  <li><a href="https://plus.google.com/102096389476199660882">Adrian Verban</a></li>
+		  <li><a href="https://github.com/apandada1">Archisman Panigrahi</a></li>
 		</ul>		
 		<p>Contributors:</p>
 		<ul>
@@ -109,6 +109,17 @@
 		    <span data-color="FF8E83"></span>
 		    <span data-color="339933"></span>
 		  </div>
+		</div>
+		
+		<div class="setting-wrapper">
+		  <div class="apiSelector dropdown">
+		    <button class="dropbtn">API Select</button>
+		    <div class="dropdown-content">
+		      <div id="source-y">Yahoo! Weather<input type="hidden" value="y"></div>
+		      <div id="source-owm">Open Weather Map<input type="hidden" value="owm"></div>
+		      <div id="source-wund">Weather Underground<input type="hidden" value="wund"></div>
+		    </div>	
+		  </div>
 		</div>		
 
 		<div class="launcher">
@@ -116,15 +127,6 @@
 		</div>
 		<div class="backgroundCheck">
 			<input type="checkbox" id="backgroundSwitch"><label for="backgroundSwitch">Use Weather Images as Background</label>
-		</div>
-		<div class="setting-wrapper">
-		  <div class="apiSelector dropdown">
-		    <button class="dropbtn">API Select</button>
-		    <div class="dropdown-content">
-		      <div id="source-y">Yahoo! Weather<input type="hidden" value="y"></div>
-		      <div id="source-owm">Open Weather Map<input type="hidden" value="owm"></div>
-		    </div>	
-		  </div>
 		</div>		
 		
 		<div class="setting-wrapper">
@@ -145,11 +147,18 @@
       <div id="city"><span></span></div>
 	  <div id="code"></div>
 	  <div class="details">
-	    <div class="left" id="temperature"></div>
-		<div class="right">
-		  <span id="windSpeed"></span> <span id="windUnit"></span><br>
-		  <span id="humidity"></span>
-		</div>
+	    <table>
+	      <tr>
+	        <td class="left">
+	          <div id="temperature"></div>
+	        </td>
+	        <td class="right">
+	          <span id="windSpeed"></span> <span id="windUnit"></span><br>
+		      <span id="humidity"></span><br>
+		      <span id="weatherDesc"></span>
+	        </td>
+	      </tr>
+	    </table>
 	  </div>	  
 	</div>
 	<div class="week">

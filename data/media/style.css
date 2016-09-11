@@ -6,14 +6,14 @@
     font-style: normal;
 }
 @font-face {
-    font-family:'Ubuntu Condensed';
-    font-style: normal;
-    font-weight: 400;
-    src: local('Ubuntu Condensed'), local('UbuntuCondensed-Regular'), url('fonts/ubuntu.woff') format('woff');
+	font-family: 'UbuntuCondensed';
+	font-weight: normal;
+	font-style: normal;
+	src: url('fonts/Ubuntu-C.ttf') format('truetype');
 }
 body {
     color: #FFFFFF;
-    font-family:"Ubuntu Condensed";
+    font-family:"UbuntuCondensed";
     -webkit-user-select: none;
     user-select: none;
 }
@@ -64,6 +64,14 @@ p, span, div {
 #otherControls {
 	text-align: right;
 }
+
+#actualWeather table, #actualWeather table tbody, #actualWeather table tbody tr {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	border-collapse: collapse;
+} 
 
 .close {
     font-family: monospace;
@@ -159,7 +167,7 @@ p, span, div {
     text-align: center;
     vertical-align: middle;
     width: 150px;    
-    padding-left: 32px;
+    padding-left: 22px;
 }
 
 /* Sunny, Tornado, Moon, Mostly Cloudy */
@@ -171,7 +179,7 @@ p, span, div {
     text-align: center;
     font-size: 24px;
     text-transform: uppercase;
-    letter-spacing: -2px;
+    letter-spacing: -1px;
     position: relative;
     margin-top: 20px;    
     width: 100%;
@@ -195,14 +203,28 @@ p, span, div {
     font-size: 0;
 }
 
+.details table, .details table tr, .details table tr td {
+	width: 100%;
+	heigh: 100%;
+	margin: 0;
+	padding: 0;
+	border-collapse: collapse;
+}
+
+#weatherDesc {
+	font-size: 25px;
+}
+
 .details .left {
     font-size: 70px;
     width: 50%;
+    height: 100%;
     letter-spacing: -7px;
-    text-align: right;
     display: inline-block;
     box-sizing: border-box;
     padding-right: 15px;
+    text-align: right;
+    vertical-align: middle;
 }
 
 .details .right {
@@ -271,7 +293,7 @@ p, span, div {
 .credits  {
     color: #333;
     font-size: 15px;
-    font-family: 'Ubuntu Condensed';
+    font-family: 'UbuntuCondensed';
     display: none;
     width: 90%;
     height: 100%;
@@ -319,7 +341,7 @@ p, span, div {
     width: 80%;
     border: 2px solid #333;
     padding: 5px;
-    font-family:"Ubuntu Condensed";
+    font-family:"UbuntuCondensed";
     font-size: 1em;
     outline: none;
 }
@@ -416,7 +438,7 @@ p, span, div {
 }
 
 #locationModal .measurement, #locationModal .speed {
-    font-family:"Ubuntu Condensed";
+    font-family:"UbuntuCondensed";
     font-size: 1em;
     width: 90%;
     margin-left: auto;
@@ -458,7 +480,7 @@ span[data-color=gradient] {
     background: #333;
     color: white;
     -webkit-transition: 150ms ease background;
-    font-family:"Ubuntu Condensed";
+    font-family:"UbuntuCondensed";
     font-size: 17px;
     padding: 3px 10px;
     letter-spacing: -1px;
@@ -500,7 +522,7 @@ input[type="range"]::-webkit-slider-thumb:active {
     border: 2px solid #222;
     color: #fff;
     -webkit-transition: 150ms ease background;
-    font-family:"Ubuntu Condensed";
+    font-family:"UbuntuCondensed";
     font-size: 17px;
     padding: 3px 10px;
     letter-spacing: -1px;

@@ -1,7 +1,7 @@
 function savelocationFromInput(inputLocation, callback) {
     $.ajax({
         type : "GET",
-        dataType : "json",
+        dataType : typeOfJson(),
         url : locationRequestUrl(inputLocation),
         success : function(data) {
         	hideError();
@@ -14,7 +14,7 @@ function savelocationFromInput(inputLocation, callback) {
 function getWeatherData(callback) {	
     $.ajax({
         type : "GET",
-        dataType : "json",
+        dataType : typeOfJson(),
         url : dataRequestUrl(),
         success: function(data) {
         	hideError();
@@ -28,6 +28,11 @@ function getWeatherData(callback) {
 function saveWeather(data, callback) {
     if ( localStorage.api == "owm" ) {
         saveOpenWeatherStats(data, function(weather) {
+            callback();
+        });
+    }
+    else if ( localStorage.api == "wund" ) {
+        saveWeatherUndergroundStats(data, function(weather) {
             callback();
         });
     }
@@ -55,6 +60,7 @@ function saveYahooStats(data, callback) {
     localStorage.weather_temp = getTemperature(item.condition.temp, units.temperature.toLowerCase());
     localStorage.weather_wind_speed = getSpeed(wind.speed, units.speed.toLowerCase());
     localStorage.weather_humidity = atmosphere.humidity;
+    localStorage.weather_desc = item.condition.text;
     
     //Weekly Weather
     weekArr = item.forecast;    
@@ -83,6 +89,7 @@ function saveOpenWeatherStats(data, callback) {
     localStorage.weather_temp = getTemperature(data.main.temp, "k");
     localStorage.weather_wind_speed = getSpeed(data.wind.speed, "mph");
     localStorage.weather_humidity = data.main.humidity;    
+    localStorage.weather_desc = data.weather[0].description;
     openWeatherForecast(data, function() {
         callback();
     });
@@ -92,7 +99,7 @@ function openWeatherForecast(data, callback) {
     $.ajax({
         type : "GET",
         dataType : "json",
-        url : "http://api.openweathermap.org/data/2.5/forecast/daily?id=" + data.id + "&appid=6cfbd805297a2ab8fe60cfc1fbcf8278&lang=" + weather.country,
+        url : "http://api.openweathermap.org/data/2.5/forecast/daily?id=" + data.id + "&appid=6cfbd805297a2ab8fe60cfc1fbcf8278&lang=" + navigator.language,
         success : function(data) {
             weekArr = data.list;
             var j = 0;
@@ -112,17 +119,56 @@ function openWeatherForecast(data, callback) {
             } 
         }
     });
-       
-    function setWeekArray(arrayObject, position) {        
-        weather.week[position] = arrayObject;
-    }
 }
 
+
+function saveWeatherUndergroundStats(data, callback) {
+    //Weather Object
+    weather = {};
+    
+    var location = data.current_observation.display_location;
+    
+    localStorage.cumulus_location = location.city;
+    localStorage.cumulus_country = location.country;
+    localStorage.cumulus_link = "http://www.wunderground.com/q/zmw:" + localStorage.cumulus;
+    localStorage.weather_temp = getTemperature(data.current_observation.temp_c, "c");
+    localStorage.weather_wind_speed = getSpeed(data.current_observation.wind_mph, "mph");
+    localStorage.weather_humidity = data.current_observation.relative_humidity.replace('%', '');
+    localStorage.weather_desc = data.current_observation.weather;
+    var strSplit = data.current_observation.icon_url.split("/");
+    var iconFromUrl = strSplit[strSplit.length - 1].replace(".gif", "");
+    localStorage.weather_code = yahooCodeFromWund(iconFromUrl);
+    weatherUndergroundForecast(localStorage.cumulus, function() {
+        callback();
+    });
+}
+
+function weatherUndergroundForecast(zmw, callback) {
+    $.ajax({
+        type : "GET",
+        dataType : typeOfJson() ,
+        url : "http://api.wunderground.com/api/30be6723cf95f92c/forecast10day/q/zmw:" + zmw + ".json",
+        success : function(data) {
+            weekArr = data.forecast.simpleforecast.forecastday;
+            for (var i = 0; i < 5; i++) {    
+                localStorage.setItem('forecast' + i + '_day', weekArr[i].date.weekday_short);
+                localStorage.setItem('forecast' + i + '_code', yahooCodeFromWund(weekArr[i].icon));
+                localStorage.setItem('forecast' + i + '_high', getTemperature(weekArr[i].high.celsius, "c"));
+                localStorage.setItem('forecast' + i + '_low', getTemperature(weekArr[i].low.celsius, "c"));
+            }            
+            callback();
+        }
+    });
+}
 
 function saveLocationLocally(data) {
     if ( localStorage.api == "owm" ) {
         localStorage.cumulus = data.id;
         localStorage.cumulus_location = data.name;
+    }
+    else if ( localStorage.api == "wund" ) {
+        localStorage.cumulus = data.RESULTS[0].zmw;
+        localStorage.cumulus_location = data.RESULTS[0].name;
     }
     else{
         localStorage.cumulus = data.query.results.place.woeid;
@@ -134,7 +180,10 @@ function saveLocationLocally(data) {
 function locationRequestUrl(inputLocation) {
     var api = localStorage.api;
     if ( localStorage.api == "owm" ) {
-        return "http://api.openweathermap.org/data/2.5/weather?q=" + inputLocation + "&appid=6cfbd805297a2ab8fe60cfc1fbcf8278";
+        return "http://api.openweathermap.org/data/2.5/weather?q=" + inputLocation + "&appid=6cfbd805297a2ab8fe60cfc1fbcf8278&lang=" + navigator.language;
+    }
+    else if ( localStorage.api == "wund" ) {
+        return "http://autocomplete.wunderground.com/aq?query=" + inputLocation + "&cb=?";
     }
     else {
         return "https://query.yahooapis.com/v1/public/yql?q=select woeid, name from geo.places(1) where text='" + inputLocation + "'&format=json";
@@ -145,7 +194,10 @@ function locationRequestUrl(inputLocation) {
 function dataRequestUrl() {
     var api = localStorage.api;
     if ( localStorage.api == "owm" ) {
-        return "http://api.openweathermap.org/data/2.5/weather?id=" + localStorage.cumulus + "&appid=6cfbd805297a2ab8fe60cfc1fbcf8278";
+        return "http://api.openweathermap.org/data/2.5/weather?id=" + localStorage.cumulus + "&appid=6cfbd805297a2ab8fe60cfc1fbcf8278&lang=" + navigator.language;
+    }
+    else if ( localStorage.api == "wund" ) {
+        return "http://api.wunderground.com/api/30be6723cf95f92c/conditions/lang:" + navigator.language.toUpperCase() + "/q/zmw:" + localStorage.cumulus + ".json";
     }
     else {
         return "https://query.yahooapis.com/v1/public/yql?q=select * from weather.forecast where woeid=" + localStorage.cumulus + "&format=json";
@@ -165,6 +217,32 @@ function yahooCodeFromOwm(owmCode){
           721: "21", 731: "19", 741: "20", 751: "19", 761: "19", 762: "3200", 771: "24", 781: "0", 800: "34", 900: "0", 901: "1", 902: "2", 903: "25", 904: "36", 905: "24", 906: "17", 951: "34", 952: "30", 953: "30", 954: "30", 955: "30",
           956: "30", 957: "24", 958: "24", 959: "24", 960: "23", 961: "23", 962: "2", 3200: "3200", 801: "30", 802: "30", 803: "28", 804: "26",};
   return yCode[owmCode];
+}
+
+//Converts Weather Underground icons names to Yahoo code
+function yahooCodeFromWund(input) {
+    var result = 3200;
+    var wundData = [ {"iconName": "chanceflurries", "ycode" : 26}, {"iconName": "chancerain", "ycode" : 26} , {"iconName": "chancerain", "ycode" : 26},
+                     {"iconName": "chancesleet", "ycode" : 26}, {"iconName": "chancesnow", "ycode" : 26}, {"iconName": "chancesnow", "ycode" : 26}, {"iconName": "chancetstorms", "ycode" : 37},
+                     {"iconName": "clear", "ycode" : 32}, {"iconName": "cloudy", "ycode" : 26}, {"iconName": "flurries", "ycode" : 43}, {"iconName": "fog", "ycode" : 21}, {"iconName": "hazy", "ycode" : 22},
+                     {"iconName": "mostlycloudy", "ycode" : 26}, {"iconName": "mostlysunny", "ycode" : 34}, {"iconName": "partlycloudy", "ycode" : 30}, {"iconName": "partlysunny", "ycode" : 30}, 
+                     {"iconName": "sleet", "ycode" : 7}, {"iconName": "rain", "ycode" : 11}, {"iconName": "snow", "ycode" : 16 }, {"iconName": "sunny", "ycode" : 32 }, {"iconName": "tstorms", "ycode" : 37 },
+                     //night time icons
+                     {"iconName": "nt_chanceflurries", "ycode" : 27}, {"iconName": "nt_chancerain", "ycode" : 27} , {"iconName": "nt_chancerain", "ycode" : 27},
+                     {"iconName": "nt_chancesleet", "ycode" : 27}, {"iconName": "nt_chancesnow", "ycode" : 27}, {"iconName": "nt_chancesnow", "ycode" : 27}, {"iconName": "nt_chancetstorms", "ycode" : 37},
+                     {"iconName": "nt_clear", "ycode" : 31}, {"iconName": "nt_cloudy", "ycode" : 27}, {"iconName": "nt_flurries", "ycode" : 43}, {"iconName": "nt_fog", "ycode" : 21}, {"iconName": "nt_hazy", "ycode" : 22},
+                     {"iconName": "nt_mostlycloudy", "ycode" : 27}, {"iconName": "nt_mostlysunny", "ycode" : 33}, {"iconName": "nt_partlycloudy", "ycode" : 29}, {"iconName": "nt_partlysunny", "ycode" : 29}, 
+                     {"iconName": "nt_sleet", "ycode" : 7}, {"iconName": "nt_rain", "ycode" : 11}, {"iconName": "nt_snow", "ycode" : 16 }, {"iconName": "nt_sunny", "ycode" : 31 }, {"iconName": "nt_tstorms", "ycode" : 37 },
+                     
+                     {"iconName": "unknown", "ycode" : 3200}
+                     ]; 
+    for (var i = 0; i < wundData.length; i++) {
+        if (wundData[i].iconName == input) {
+            result = wundData[i].ycode;
+            return result;
+        }
+    } 
+    return result;
 }
 
 function getDay(date) {
@@ -281,4 +359,13 @@ function getBackgroundFromCode(code) {
             };
     return images[code];
     
+}
+
+function typeOfJson() {
+    if ( localStorage.api == "wund" ) {
+        return "jsonp";
+    }
+    else {
+        return "json";
+    }
 }
