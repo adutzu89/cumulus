@@ -9,6 +9,7 @@ $(document).ready(function() {
     //APP START.    
     if (!localStorage.cumulus) {
         //if there is no data initialise default data in localStorage for UI
+        $("#decoratorBar .settings, #decoratorBar .sync").hide();
         init_storage();
         show_settings("location");
     } else {
@@ -102,7 +103,7 @@ $(document).ready(function() {
             $(".dropdown-content").toggle();
             $("#decoratorBar .settings, #decoratorBar .sync").hide();
             localStorage.api = $(this).find(":input:hidden:eq(0)").val();      
-            var searchLocation = localStorage.cumulus_location + "," + localStorage.cumulus_country;
+            var searchLocation = localStorage.cumulus_location + ", " + localStorage.cumulus_country;
             savelocationFromInput(searchLocation, function(cityCode) {
                 $("#decoratorBar .sync").show();
                 setApiSelected();
@@ -246,7 +247,7 @@ function init_storage() {
     localStorage.cumulus_color =  localStorage.cumulus_color || "gradient";
     localStorage.cumulus_launcher = localStorage.cumulus_launcher || "unchecked";
     localStorage.api = localStorage.api || "y";
-    localStorage.app_opacity = localStorage.app_opacity || "0.8";
+    localStorage.app_opacity = localStorage.app_opacity || "1.0";
     localStorage.backgroundImage = localStorage.backgroundImage || "unchecked"; 
     localStorage.weather_desc = localStorage.weather_desc || ""; 
 }

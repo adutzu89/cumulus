@@ -39,6 +39,7 @@ class CumulusWindow(Window):
     def finish_initializing(self, builder): # pylint: disable=E1002
         """Set up the main window"""
         super(CumulusWindow, self).finish_initializing(builder)
+        defaultLocale = str(locale.getdefaultlocale())
 
         self.box = self.builder.get_object("box")
         self.window = self.builder.get_object("cumulus_window")
@@ -52,7 +53,7 @@ class CumulusWindow(Window):
         self.webviewsettings.set_property("javascript-can-open-windows-automatically", True)
         self.webviewsettings.set_property("enable-universal-access-from-file-uris", True)
         self.webviewsettings.set_property('enable-default-context-menu',False)
-        self.webview.load_uri(get_media_file('app.html'))
+        self.webview.load_uri(get_media_file('app.html') + "?lang=" + defaultLocale[2:4])
         self.box.show_all()
 
         try:
