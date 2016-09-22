@@ -9,7 +9,7 @@ Based on [Stormcloud](https://github.com/consindo/stormcloud/) by [Jono Cooper](
 
 # Major Thanks
 - [Adrian Verban](https://github.com/vadrian89)
-- [Archisman Panigrahi](Archisman Panigrahi)
+- [Archisman Panigrahi](https://github.com/apandada1)
 - [Adam Whitcroft](https://twitter.com/AdamWhitcroft) for [Climacons](http://adamwhitcroft.com/climacons/).
 
 # TODO
